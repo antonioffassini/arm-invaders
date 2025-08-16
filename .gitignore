@@ -1,0 +1,13 @@
+# binários
+arm_invaders_sim
+*.o
+*.out
+*.log
+
+# backups/temporários
+*~
+*.swp
+.DS_Store
+
+# PDFs gerados
+doc/*.pdf
