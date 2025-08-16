@@ -6,10 +6,11 @@ BIN=arm_invaders_sim
 all: $(BIN)
 
 $(BIN): $(SRC)
-$(CC) $(CFLAGS) -o $@ $(SRC)
+	$(CC) $(CFLAGS) -o $@ $(SRC)
 
 run: all
-./$(BIN)
+	./$(BIN)
 
 clean:
-rm -f $(BIN)
+	rm -f $(BIN)
+
