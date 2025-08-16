@@ -1,244 +1,134 @@
-% Relatorio.tex — ARM Invaders (Relatório Final)
-% Compile: pdflatex Relatorio.tex (duas vezes para sumário)
-\documentclass[12pt,a4paper]{article}
-
-\usepackage[T1]{fontenc}
+\documentclass[12pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[brazil]{babel}
 \usepackage{lmodern}
-\usepackage{geometry}
-\geometry{margin=2.5cm}
-\usepackage{setspace}
-\onehalfspacing
-\usepackage{hyperref}
-\hypersetup{
-  colorlinks=true,
-  linkcolor=blue,
-  urlcolor=blue,
-  citecolor=blue,
-  pdftitle={ARM Invaders — Relatório Final},
-  pdfauthor={Antonio Fassini}
-}
 \usepackage{graphicx}
-\usepackage{float}
-\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{geometry}
 \usepackage{enumitem}
-\usepackage{listings}
-\lstset{
-  basicstyle=\ttfamily\small,
-  breaklines=true,
-  frame=single,
-  numbers=left,
-  numberstyle=\tiny,
-  tabsize=2,
-  keywordstyle=\color{blue}\bfseries,
-  commentstyle=\color{gray!70},
-  stringstyle=\color{teal!70!black}
-}
+\geometry{top=3cm, bottom=2.5cm, left=3cm, right=2.5cm}
 
-\title{\textbf{ARM Invaders} \\ \large Mini‑jogo/simulador didático de registradores ARM no terminal}
-\author{Antonio Fassini}
-\date{Agosto de 2025}
+\title{ARM Invaders: Relatório do Projeto}
+\author{Antonio Fassini \\ Pedro Fassini}
+\date{\today}
 
 \begin{document}
-\begin{titlepage}
-    \centering
-    {\Large Universidade de São Paulo}\\[2mm]
-    {\large Laboratório de Processadores}\\[18mm]
-    {\huge \textbf{ARM Invaders}}\\[3mm]
-    {\Large Mini‑jogo/simulador didático de registradores ARM no terminal}\\[18mm]
-    {\Large \textbf{Relatório Final}}\\[18mm]
-    \textbf{Autor:} Antonio Fassini\\[2mm]
-    \textbf{Professor:} (preencher)\\[12mm]
-    \textbf{Data:} Agosto de 2025\\[20mm]
-    \vfill
-\end{titlepage}
 
-\pagenumbering{roman}
-\begin{abstract}
-O \textit{ARM Invaders} é um mini‑jogo/simulador didático, executado em terminal, que visualiza o estado dos registradores \texttt{r0..r7} e das flags \texttt{N/Z/C/V} enquanto o usuário executa operações aritméticas (\texttt{ADD}, \texttt{SUB}, \texttt{MUL}, \texttt{MOV}). O projeto busca reduzir a abstração típica da arquitetura ARM por meio de uma interface simples, colorida e com elementos lúdicos (\textit{HUD}, barras de ``vida'' e ``naves'' em movimento). Foram implementados também comandos de utilidade (\texttt{rand}, \texttt{save}/\texttt{load}, \texttt{script}) para facilitar demonstrações e testes. O código é em C padrão (C11), portável para Linux/WSL e Raspberry Pi.
-\end{abstract}
-
+\maketitle
 \tableofcontents
-\clearpage
-\pagenumbering{arabic}
+\onehalfspacing
 
-\section{Introdução}
-Aprender arquitetura de processadores e manipulação de registradores pode parecer abstrato em estágios iniciais. O \textbf{ARM Invaders} nasce com o objetivo de tornar concreto --- e divertido --- o impacto de instruções básicas sobre registradores e flags, usando uma interface de terminal leve, colorida e interativa.
+\chapter{Introdução}
+O projeto \textbf{ARM Invaders} é um mini-jogo/simulador interativo, inspirado no clássico \textit{Space Invaders}, mas com foco didático na manipulação de registradores ARM e flags do processador.  
 
-\subsection{Objetivos}
-\begin{itemize}[noitemsep]
-  \item Visualizar em tempo real alterações em \texttt{r0..r7} e nas flags \texttt{N/Z/C/V};
-  \item Relacionar comandos de alto nível a instruções ARM (representadas no \textit{log} didático);
-  \item Propor um artefato simples, de baixo risco e fácil execução em laboratório (PC/WSL ou Raspberry Pi);
-  \item Servir de base para extensões (novas instruções, UI com \texttt{ncurses}, modo desafio etc.).
+Ele foi desenvolvido na linguagem C, com uso de trechos de \textit{inline Assembly}, e é executado diretamente no terminal da Raspberry Pi ou em ambientes Linux/WSL.  
+A proposta é transformar conceitos abstratos de Organização e Arquitetura de Computadores em uma experiência visual e interativa, permitindo ao aluno observar em tempo real o funcionamento de registradores, flags e instruções básicas da ISA ARM.
+
+\chapter{Objetivos e Motivação}
+O ARM Invaders busca:
+\begin{itemize}
+    \item Tornar o estudo de registradores ARM mais visual e acessível, facilitando a fixação de conceitos fundamentais.
+    \item Demonstrar, de forma prática, como instruções simples modificam o estado interno de um processador.
+    \item Oferecer um recurso multiplataforma, rodando apenas no terminal, sem dependências gráficas pesadas.
+    \item Aproximar conteúdos da disciplina (Arquitetura e Redes) do funcionamento real de hardware e sistemas.
 \end{itemize}
 
-\section{Relação com a Disciplina}
-Embora o foco da disciplina seja prática com ARM e Raspberry Pi, muitos estudantes esbarram na abstração inicial de registradores e flags. O \textit{ARM Invaders} reforça:
-\begin{itemize}[noitemsep]
-  \item Conceitos de \textbf{arquitetura ARM}: registradores de propósito geral, flags \texttt{N/Z/C/V}, operações básicas;
-  \item \textbf{Integração hardware--software}: como mudanças em dados internos se refletem em comportamento do programa;
-  \item \textbf{Raciocínio passo a passo}: cada comando produz um estado observável, facilitando a depuração e o estudo.
+\chapter{Relação com a Disciplina}
+Embora o foco da disciplina esteja em protocolos e comunicação em rede, todo sistema computacional depende de operações internas da CPU.  
+O simulador permite:
+\begin{itemize}
+    \item Entender como dados são processados internamente na CPU.
+    \item Visualizar a influência de instruções de baixo nível sobre desempenho e eficiência.
+    \item Conectar hardware, sistema operacional e aplicações em rede.
+    \item Explorar o ciclo \textit{fetch-decode-execute} em um contexto lúdico.
 \end{itemize}
 
-\section{Escopo e Decisões de Projeto}
-\subsection{Simplicidade intencional}
-Optou-se por um escopo enxuto: operações aritméticas essenciais e uma UI ASCII com cores ANSI. Essa simplicidade:
-\begin{itemize}[noitemsep]
-  \item Reduz dependências (compila com \texttt{gcc} padrão);
-  \item Favorece a compreensão do código por iniciantes;
-  \item Diminui riscos de integração/ambiente e viabiliza a entrega no prazo.
+\chapter{Decisões de Design}
+As principais escolhas foram:
+\begin{itemize}
+    \item \textbf{Simplicidade intencional:} operações básicas (ADD, SUB, MUL, MOV) garantem curva de aprendizado suave.
+    \item \textbf{Terminal puro:} compatibilidade com qualquer ambiente Linux/WSL/Raspberry Pi.
+    \item \textbf{Código comentado:} cada função foi documentada para incentivar exploração e modificações.
+    \item \textbf{Extensibilidade:} comandos adicionais podem ser facilmente implementados no interpretador.
 \end{itemize}
 
-\subsection{Portabilidade e baixo custo}
-O código C (C11) roda tanto em WSL/Linux de PC quanto em Raspberry Pi (ARM). Evitou-se usar bibliotecas gráficas pesadas.
-
-\section{Arquitetura e Implementação}
-\subsection{Visão geral}
-O projeto consiste em um único executável que mantém estado de CPU (registradores e flags) e oferece um REPL de comandos. A saída é reimpressa a cada operação com um \textit{HUD} colorido (barras de 0--100, flags destacadas e ``naves'' com movimento lateral simples).
-
-\subsection{Principais componentes}
-\begin{itemize}[noitemsep]
-  \item \textbf{Estrutura \texttt{CPU}}: \texttt{uint32\_t r[8]}, \texttt{Flags}, posições/direções das ``naves'' e contador de turnos;
-  \item \textbf{Atualização de flags}: \texttt{ADD/SUB} com modelagem realista; \texttt{MUL} com \texttt{C/V} didáticas;
-  \item \textbf{REPL e parser}: comandos \texttt{add/sub/mul/mov/rand/save/load/script/show/reset/help/quit};
-  \item \textbf{Persistência}: \texttt{save}/\texttt{load} em texto simples (fácil de inspecionar/versionar).
-\end{itemize}
-
-\subsection{Estrutura de diretórios}
-\begin{lstlisting}[language=bash]
-arm_invaders/
-├── src/arm_invaders_sim.c
-├── doc/Relatorio.tex    (este arquivo; PDF gerado aqui)
-├── media/               (prints do terminal para o README/relatório)
-├── scripts/demo.txt     (roteiro automatizado de comandos)
-├── Makefile
-├── README.md
-├── LICENSE
-└── .gitignore
-\end{lstlisting}
-
-\section{Funcionalidades}
-\begin{itemize}[noitemsep]
-  \item \textbf{Operações}: \texttt{add x k}, \texttt{sub x k}, \texttt{mul x y}, \texttt{mov x k};
-  \item \textbf{Utilidades}: \texttt{rand x a b}, \texttt{save}/\texttt{load}, \texttt{script arquivo.txt}, \texttt{show/reset/help/quit};
-  \item \textbf{UI}: cores ANSI, barras de vida (0--100), flags coloridas, ``naves'' animadas, explosão ASCII em \texttt{rX=0};
-  \item \textbf{Didática}: impressão de pseudo-\texttt{ASM} no terminal após cada operação.
-\end{itemize}
-
-\section{Como Compilar e Executar}
-\subsection{Requisitos}
-Ubuntu/WSL ou Raspberry Pi com \texttt{gcc}. Em Ubuntu:
-\begin{lstlisting}[language=bash]
-sudo apt update
-sudo apt install -y build-essential
-\end{lstlisting}
-
-\subsection{Makefile}
-\begin{lstlisting}
-make         # compila
-make run     # compila e executa
-make clean   # remove o binário
-\end{lstlisting}
-
-\subsection{Execução direta}
-\begin{lstlisting}[language=bash]
-gcc -std=c11 -O2 -Wall -Wextra -o arm_invaders_sim src/arm_invaders_sim.c
-./arm_invaders_sim
-\end{lstlisting}
-
-\section{Roteiro de Testes Sugerido}
-\begin{lstlisting}
-add r2 10
-sub r2 5
-sub r2 105       # r2 -> 0 (explosão); Z=1
-reset
-mov 3 0
-add 3 1073741824
-add 3 1073741824 # overflow de sinal -> V=1
-show
-mov 4 70000
-mov 5 70000
-mul 4 5          # produto 32 bits; C/V didáticas
-show
-save estado.txt
-load estado.txt
-script scripts/demo.txt
-\end{lstlisting}
-
-\section{Resultados (prints)}
-Inclua nesta seção capturas do terminal (\texttt{media/}) ilustrando:
-\begin{itemize}[noitemsep]
-  \item Tela inicial do HUD com barras e flags;
-  \item Caso de \texttt{rX=0} com explosão;
-  \item Exemplo de \texttt{V=1} em soma com overflow;
-  \item Uso de \texttt{save}/\texttt{load} e \texttt{script}.
-\end{itemize}
-
-\begin{figure}[H]
-  \centering
-  \fbox{\rule{0pt}{3cm}\rule{0.9\linewidth}{0pt}} % placeholder
-  \caption{HUD do ARM Invaders (placeholder para captura real).}
-\end{figure}
-
-\section{Limitações e Trabalhos Futuros}
-\textbf{Limitações}:
-\begin{itemize}[noitemsep]
-  \item Parser simples (imediatos negativos/hex não suportados);
-  \item Modelagem didática de \texttt{C/V} em \texttt{MUL};
-  \item UI ASCII (sem \texttt{ncurses} por simplicidade).
-\end{itemize}
-\textbf{Possíveis extensões}:
-\begin{itemize}[noitemsep]
-  \item Instruções lógicas (\texttt{AND/ORR/EOR}), \texttt{LSL/LSR/ASR};
-  \item Interface com \texttt{ncurses} (janelas, teclado não bloqueante);
-  \item Modo desafio/pontuação; exportação de \texttt{trace}; web dashboard simples.
-\end{itemize}
-
-\section{Conclusão}
-O \textit{ARM Invaders} cumpre o papel de ponte entre teoria e prática, tornando visível e intuitivo o efeito de instruções sobre registradores e flags ARM. A simplicidade foi uma escolha de engenharia para maximizar portabilidade, reduzir riscos e favorecer aprendizado colaborativo. O código está pronto para servir como base de extensões futuras.
-
-\section*{Repositório}
-Código-fonte e documentação: \\
-\url{https://github.com/SEU_USUARIO/arm-invaders} \\
-(\textit{atualize com a URL real do repositório})
-
-\section*{Referências}
-\begin{itemize}[noitemsep]
-  \item ARM Architecture Reference Manual (conceitos de flags e instruções).
-  \item Documentação GCC e \textit{ANSI Escape Codes}.
-\end{itemize}
-
-\appendix
-\section*{Anexo A — Roteiro do Vídeo (5 min)}
-\begin{enumerate}[label=\arabic*.]
-  \item \textbf{Abertura (20s)}: apresentação e objetivo.
-  \item \textbf{Motivação (30s)}: reduzir abstração; conexão com a disciplina.
-  \item \textbf{Decisões (20s)}: simplicidade, portabilidade, didática.
-  \item \textbf{Demo (2--3 min)}: comandos do roteiro de testes.
-  \item \textbf{Estrutura (30s)}: pastas, Makefile, scripts.
-  \item \textbf{Fecho (20s)}: próximos passos e link do GitHub.
+\chapter{Descrição da Lógica e Funcionalidades}
+A implementação segue esta lógica:
+\begin{enumerate}
+    \item \textbf{Inicialização:} cria registradores e flags com valores iniciais.
+    \item \textbf{HUD:} mostra registradores como “naves” com barras de vida, números e símbolos.
+    \item \textbf{Entrada:} usuário escolhe registrador e operação (ADD, SUB, MUL, MOV).
+    \item \textbf{Execução:} a operação é realizada em C com \textit{inline Assembly} exibido no terminal.
+    \item \textbf{Flags:} N, Z, C, V são atualizadas após cada instrução.
+    \item \textbf{Explosão:} quando o valor chega a zero, a nave “explode” em ASCII-art.
+    \item \textbf{Loop principal:} mantém o jogo ativo enquanto houver registradores com vida.
 \end{enumerate}
 
-\section*{Anexo B — Exemplo de Script}
-\begin{lstlisting}
-# scripts/demo.txt
-show
-add r2 10
-sub r2 5
-sub r2 105
-reset
-mov 3 0
-add 3 1073741824
-add 3 1073741824
-show
-mov 4 70000
-mov 5 70000
-mul 4 5
-show
-quit
-\end{lstlisting}
+\section*{Funcionalidades Implementadas}
+\begin{itemize}
+    \item Visualização contínua dos registradores e flags.
+    \item Execução das operações aritméticas: ADD, SUB, MUL, MOV.
+    \item Uso de cores ANSI para realce.
+    \item HUD com animações simples em ASCII.
+    \item Geração de valores aleatórios (\texttt{rand}).
+    \item Salvamento e carregamento de estado (save/load).
+    \item Execução automatizada de comandos (scripts).
+\end{itemize}
+
+\chapter{Conexão com Conteúdos Teóricos}
+\begin{itemize}
+    \item \textbf{Registradores:} simulam armazenamento temporário de dados.
+    \item \textbf{Flags:} N/Z/C/V exibem resultados das operações.
+    \item \textbf{Memória:} gerenciamento de estados e persistência via arquivos de texto.
+    \item \textbf{ISA ARM:} instruções básicas demonstradas com trechos reais de Assembly.
+    \item \textbf{Ciclo de Execução:} o loop do jogo reflete o ciclo \textit{fetch-decode-execute}.
+\end{itemize}
+
+\chapter{Estrutura do Repositório}
+\begin{verbatim}
+arm_invaders/
+│── src/        # Código-fonte
+│── doc/        # Relatórios e documentação
+│── media/      # Imagens, vídeos e capturas
+│── scripts/    # Exemplos de automação
+│── LICENSE     # Licença do projeto
+│── Makefile    # Script de compilação
+└── README.md   # Documentação resumida
+\end{verbatim}
+
+\chapter{Como Compilar e Executar}
+\section*{Requisitos}
+\begin{itemize}
+    \item \texttt{gcc} (instalar via: \texttt{sudo apt install build-essential})
+\end{itemize}
+
+\section*{Compilação}
+\begin{verbatim}
+make
+\end{verbatim}
+
+\section*{Execução}
+\begin{verbatim}
+make run
+\end{verbatim}
+
+\chapter{Resultados e Discussão}
+O ARM Invaders permitiu observar:
+\begin{itemize}
+    \item Impacto imediato de instruções em registradores e flags.
+    \item Relação entre baixo nível (Assembly) e lógica de alto nível (C).
+    \item Desafios de sincronização e atualização em tempo real.
+    \item Potencial de expansão para novos comandos e interfaces.
+\end{itemize}
+
+\chapter{Conclusão}
+O projeto cumpriu sua função didática: aproximar a teoria da prática em Arquitetura ARM.  
+Além de reforçar conceitos como registradores, flags e instruções, mostrou que é possível criar experiências motivadoras e visuais mesmo em ambientes simples como o terminal.
+
+\chapter{Licença}
+Este projeto é distribuído sob a licença MIT. Consulte o arquivo LICENSE para mais detalhes.
 
 \end{document}
 
